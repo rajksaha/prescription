@@ -1,9 +1,9 @@
 <?php
 
-$hostname = 'localhost';        // Your MySQL hostname. Usualy named as 'localhost', so you're NOT necessary to change this even this script has already online on the internet.
+$hostname = 'bottom-up-dev.c8lq1wttwtce.ap-southeast-1.rds.amazonaws.com:3306';        // Your MySQL hostname. Usualy named as 'localhost', so you're NOT necessary to change this even this script has already online on the internet.
 $dbname   = 'doctor_feed'; // Your database name.
-$username = 'root';             // Your database username.
-$password = 'pass';                 // Your database password. If your database has no password, leave it empty.
+$username = 'admin';             // Your database username.
+$password = '5tgbvfr4';                 // Your database password. If your database has no password, leave it empty.
 
 // Let's connect to host
 mysql_connect($hostname, $username, $password) or DIE('Connection to host is failed, perhaps the service is down!');

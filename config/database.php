@@ -2,10 +2,10 @@
 class Database{
   
     // specify your own database credentials
-    private $host = "localhost";
+    private $host = "bottom-up-dev.c8lq1wttwtce.ap-southeast-1.rds.amazonaws.com:3306";
     private $db_name = "doctor_feed";
-    private $username = "root";
-    private $password = "pass";
+    private $username = "admin";
+    private $password = "5tgbvfr4";
     public $conn;
   
     // get the database connection
