@@ -21,6 +21,7 @@ function getPatientInfo($conn, $patientID){
 			pup.address AS address,
 			pup.contactNo AS contactNo,
 			pup.dateOfBirth AS dateOfBirth,
+			pu.userName,
 			pup.sex AS sex,
 			cd.shortName as patientImage
 		FROM `patient` p

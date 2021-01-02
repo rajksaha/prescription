@@ -14,7 +14,6 @@ function getPrescribedAdvice($conn, $appointmentID){
 			JOIN doctor_feed.content_advice ca ON pa.adviceID = ca.adviceID
 			WHERE pa.appointmentID = '$appointmentID'";
 
-	$result=mysqli_query($conn, $sql);
-	return $result;
+	return mysqli_query($conn, $sql);
 }
 ?>

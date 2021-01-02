@@ -1,6 +1,6 @@
 <?php
 
-function getPrescribedInv($appointmentID){
+function getPrescribedInv($conn, $appointmentID){
 
 	$sql = "SELECT
 			pi.`presInvID`,
@@ -17,7 +17,7 @@ function getPrescribedInv($appointmentID){
 		JOIN doctor_feed.content_inv ci ON pi.invID = ci.invID
 		WHERE pi.`appointmentID` = '$appointmentID'";
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 
 	return $result;
 

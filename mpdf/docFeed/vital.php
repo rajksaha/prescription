@@ -17,9 +17,7 @@ function getPrescribedVital($conn, $appointmentID){
 		JOIN doctor_feed.content_vital cv ON pv.vitalID = cv.vitalID
 	WHERE pv.`appointmentID`= '$appointmentID'";
 
-	$result=mysqli_query($conn, $sql);
-
-	return $result;
+	return mysqli_query($conn, $sql);
 
 }
 

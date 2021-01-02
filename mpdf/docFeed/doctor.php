@@ -1,6 +1,6 @@
 <?php
 
-function getDoctorInfo ($doctorId){
+function getDoctorInfo ($conn, $doctorId){
 
 	$sql=mysql_query("SELECT
 						`doctorSettingID`,
@@ -20,7 +20,7 @@ function getDoctorInfo ($doctorId){
 						`createdOn`
 						FROM `doctor_setting`
 						WHERE d.doctorID = $doctorId");
-	$result=mysql_fetch_assoc($sql);
+	$result=mysqli_fetch_assoc($conn, $sql);
 
 	return $result;
 

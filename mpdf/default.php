@@ -166,7 +166,7 @@ function Show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
             if($drugDoseInitial == "" || $drugDose == ''){
                 $full_str = "$drugDose $restOftheString|";
             }else{
-                $full_str ="($drugDose)$drugDoseInitial $restOftheString|";
+                $full_str ="($drugDose)$drugDoseInitial $restOftheString।";
             }
 
             $full_str = $this->convertNumberToBangla($full_str);
@@ -246,25 +246,25 @@ function preparePrescription($conn, $appointmentID){
 	$rightYaxis = $pdf->checkForPageChange($rightYaxis, $pdf->page);
 	$rightYaxis = $pdf->Show_advice($conn, $appointmentID,$rightXaxis,$rightYaxis + 10,$size + 1,$maxXForRight);
 	$rightYaxis = $pdf->checkForPageChange($rightYaxis, $pdf->page);
-	//$rightYaxis = $pdf-> show_nextVisit($appointmentID,$rightXaxis,$rightYaxis + 10 ,$size +2);
+	$rightYaxis = $pdf-> show_nextVisit($conn, $appointmentID,$rightXaxis,$rightYaxis + 10 ,$size +2);
 	
 	
 	$yPageNo = $pdf->page;
 	$pageNum = 1;
 	$pdf->page = $pageNum;
 	
-// 	if($appType != 4){
-// 		$patientImage = $pdf->ShowPatInfo($patientID, 45, $appointmentID);
-// 		if($patientImage != null){
-// 			$pdf->displayImage($username, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
-// 			$gap = $gap + $photoSize;
-// 		}
-// 	}
+	if($appType != 4){
+		$patientImage = $pdf->ShowPatInfo($conn, $patientID, 45, $appointmentID);
+		if($patientImage != null){
+			$pdf->displayImage($username, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
+			$gap = $gap + $photoSize;
+		}
+	}
 	
 	$leftYaxis=$pdf->Show_Complain($conn, $appointmentID,$leftXaxis,$leftYaxis + $gap, $maxX , $size);
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	/* $leftYaxis=$pdf->Show_vital($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX , $size);
- 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
+ 	$leftYaxis=$pdf->Show_vital($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX , $size);
+ 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 // 	$leftYaxis=$pdf->Show_History($appointmentID,$leftXaxis,$leftYaxis +5, $maxX , $size, "RISK", "Risk Factors");
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 // 	 $leftYaxis=$pdf->Show_Past_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 0 , "Past Disease");
@@ -279,10 +279,10 @@ function preparePrescription($conn, $appointmentID){
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 // 	 $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	/* $leftYaxis=$pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
+ 	$leftYaxis=$pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
- 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
+ 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	/* $leftYaxis=$pdf->showComment($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	 $leftYaxis=$pdf-> show_ref_doc($appointmentID,$leftXaxis,$leftYaxis + 5,$size);

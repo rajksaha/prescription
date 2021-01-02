@@ -16,7 +16,7 @@ function getAppointmentInfo($conn, $appointmentID){
 			`createdOn`
 		FROM `doctor_feed`.`appointment`
 		WHERE appointmentID = '$appointmentID'";
-	$result = mysqli_query($conn, "SELECT * FROM `doctor_feed`.`appointment` WHERE appointmentID = '$appointmentID'");
+	$result = mysqli_query($conn, $sql);
 	if($result != null){
 		return mysqli_fetch_assoc($result);
 	}
