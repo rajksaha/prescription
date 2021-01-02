@@ -1,6 +1,6 @@
 <?php
 
-function getPrescribedVital($appointmentID){
+function getPrescribedVital($conn, $appointmentID){
 
 	$sql = "SELECT
 		pv.`presVitalID`,
@@ -17,7 +17,7 @@ function getPrescribedVital($appointmentID){
 		JOIN doctor_feed.content_vital cv ON pv.vitalID = cv.vitalID
 	WHERE pv.`appointmentID`= '$appointmentID'";
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 
 	return $result;
 

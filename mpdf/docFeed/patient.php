@@ -1,5 +1,5 @@
 <?php
-function getPatientInfo($patientID){
+function getPatientInfo($conn, $patientID){
 	$sql = "SELECT
 			p.`patientID`,
 			p.`userID`,
@@ -29,7 +29,7 @@ function getPatientInfo($patientID){
 		LEFT JOIN content_detail cd ON cd.entityType = 'PATIENTIMG'  AND cd.entityID = '$patientID'
 		WHERE p.`patientID` = '$patientID'" ;
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 
 	return $result;
 }

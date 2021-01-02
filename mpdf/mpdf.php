@@ -32950,12 +32950,12 @@ function checkForPageChange($yaxis, $pageNum){
         return $this->GetY();
 
     }
-    function showPatInfo($patientID, $yAxis, $appointmentID){
+    function showPatInfo($conn, $patientID, $yAxis, $appointmentID){
 
-        $resultData = getPatientInfo($patientID);
+        $resultData = getPatientInfo($conn, $patientID);
 
 
-        $rec = mysql_fetch_assoc($resultData);
+        $rec = mysqli_fetch_assoc($resultData);
 
         $patientCode = $rec['patientCode'];
 
@@ -33070,25 +33070,25 @@ function checkForPageChange($yaxis, $pageNum){
         return $this->GetY();
 
     }
-    function show_Complain($appointmentID,$xAxis,$yAxis, $maxX , $size) {
+    function show_Complain($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size) {
 
-        $resultData = getPrescribedComplain($appointmentID);
-
-
+        $resultData = getPrescribedComplain($conn, $appointmentID);
 
 
-        if(mysql_num_rows($resultData) > 0){
+
+
+        if(mysqli_num_rows($resultData) > 0){
             $this->SetFont('nikosh','B',$size);
             $this->SetXY($xAxis, $yAxis);
             $this->MultiCell($maxX,5,"Chief Complaints");
             $yAxis += 6;
 
-        }if(mysql_num_rows($resultData) == 0){
+        }if(mysqli_num_rows($resultData) == 0){
             return $yAxis - 5;
         }
         $this->SetFont('nikosh','',$size);
         $var = 1;
-        while($row=  mysql_fetch_array($resultData)){
+        while($row= mysqli_fetch_array($resultData)){
 
             $symptomName = $row['symptomName'];
             $durationNum = $row['durationNum'];
@@ -33270,11 +33270,11 @@ function checkForPageChange($yaxis, $pageNum){
 
     }
 
-    function show_advice($appointmentID,$xAxis,$yAxis,$size,$maxX){
+    function show_advice($conn, $appointmentID,$xAxis,$yAxis,$size,$maxX){
 
-        $resultData = getPrescribedAdvice($appointmentID);
+        $resultData = getPrescribedAdvice($conn, $appointmentID);
 
-        if(mysql_num_rows($resultData) > 0){
+        if(mysqli_num_rows($resultData) > 0){
             $this->SetFont('nikosh','B',$size );
             $this->SetXY($xAxis , $yAxis);
             $this->MultiCell(20,5,"Advice");
@@ -33282,7 +33282,7 @@ function checkForPageChange($yaxis, $pageNum){
 
         $this->SetFont('nikosh','',$size );
 
-        while($row=  mysql_fetch_array($resultData)){
+        while($row=  mysqli_fetch_array($resultData)){
             $advice = $row['advice'];
 
             $yAxis =  $this->GetY();

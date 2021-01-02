@@ -1,5 +1,5 @@
 <?php
-function getPresCribedDrugs($appointmentID){
+function getPresCribedDrugs($conn, $appointmentID){
 
 
 	$sql = "SELECT
@@ -35,12 +35,12 @@ function getPresCribedDrugs($appointmentID){
 		LEFT JOIN doctor_feed.content_when_type CWT ON PD.drugWhenID = CWT.whenTypeID
 		WHERE PD.appointMentID = '$appointmentID' ORDER BY PD.presNum" ;
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 
 	return $result;
 }
 
-function getPreiodicList($presDrugID){
+function getPreiodicList($conn, $presDrugID){
 
 	$sql = "SELECT
 			PDD.`presDrugID`,
@@ -58,7 +58,7 @@ function getPreiodicList($presDrugID){
 			JOIN doctor_feed.content_duration_type CDT ON PDD.durationType = CDT.durationType
 			WHERE PDD.presDrugID = $presDrugID";
 			
-	$dose = mysql_query($sql);
+	$dose = mysqli_query($conn, $sql);
 
 
 	return $dose;

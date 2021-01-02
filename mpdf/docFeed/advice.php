@@ -1,5 +1,5 @@
 <?php
-function getPrescribedAdvice($appointmentID){
+function getPrescribedAdvice($conn, $appointmentID){
 	$sql = "SELECT
 				pa.`presAdviceID`,
 				pa.`appointmentID`,
@@ -14,7 +14,7 @@ function getPrescribedAdvice($appointmentID){
 			JOIN doctor_feed.content_advice ca ON pa.adviceID = ca.adviceID
 			WHERE pa.appointmentID = '$appointmentID'";
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 	return $result;
 }
 ?>

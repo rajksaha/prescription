@@ -1,6 +1,6 @@
 <?php
 
-function getPrescribedComplain($appointmentID){
+function getPrescribedComplain($conn, $appointmentID){
 
 	$sql = "SELECT
 			pc.`complainID`,
@@ -20,7 +20,7 @@ function getPrescribedComplain($appointmentID){
 		LEFT JOIN doctor_feed.content_duration_type CDT ON pc.durationType = CDT.durationType
 		WHERE pc.`appointmentID` = '$appointmentID' ORDER BY pc.complainID";
 
-	$result=mysql_query($sql);
+	$result=mysqli_query($conn, $sql);
 
 	return $result;
 

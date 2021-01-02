@@ -19,9 +19,9 @@ class BasicFunction extends mPDF
         }
 
     }
-    function show_med($appointmentID, $xAxis, $yAxis, $size){
+    function show_med($conn, $appointmentID, $xAxis, $yAxis, $size){
 
-        $resultData = getPresCribedDrugs($appointmentID);
+        $resultData = getPresCribedDrugs($conn, $appointmentID);
 
         if(mysql_num_rows($resultData) > 10){
             $size = $size - 2;
@@ -42,7 +42,7 @@ class BasicFunction extends mPDF
         $durationCell = 70;
         $whenCell = 15;
         $var = 1;
-        while($row=  mysql_fetch_array($resultData)){
+        while($row=mysqli_fetch_array($resultData)){
 
             //$this->SetFont('Times','',$size + 2);
 
@@ -189,11 +189,11 @@ class BasicFunction extends mPDF
         return $this->GetY();
 
     }
-    function showClinicalRecord($appointmentID, $xAxis,$yAxis,$maxX,$size) {
+    function showClinicalRecord($conn, $appointmentID, $xAxis,$yAxis,$maxX,$size) {
 
         $this->SetFont('Times','',$size);
 
-        $resultData = getContentDetail($appointmentID, 'CLINICAL_RECORD');
+        $resultData = getContentDetail($conn, $appointmentID, 'CLINICAL_RECORD');
 
         if(mysql_num_rows($resultData) > 0){
             $this->SetFont('Times','',$size +1);
@@ -219,9 +219,9 @@ class BasicFunction extends mPDF
         return $this->GetY();
 
     }
-    function ShowPatInfo($patientCode,$yAxis, $appointmentID){
+    function ShowPatInfo($conn, $patientCode,$yAxis, $appointmentID){
 
-        $resultData = getPatientInformaition($patientCode);
+        $resultData = getPatientInformaition($conn, $patientCode);
 
 
 
@@ -287,10 +287,10 @@ class BasicFunction extends mPDF
         return $rec['patientImage'];
 
     }
-    function show_Drug_History($appointmentID,$xAxis,$yAxis, $maxX , $size, $conentType , $hedearText){
+    function show_Drug_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $conentType , $hedearText){
 
 
-        $contentData = getContentDetail($appointmentID, $conentType);
+        $contentData = getContentDetail($conn, $appointmentID, $conentType);
 
         if(mysql_num_rows($contentData) > 0){
             $this->SetFont('Times','B',$size + 1 );
@@ -316,9 +316,9 @@ class BasicFunction extends mPDF
 
         return $this->GetY();
     }
-    function showComment($appointmentID,$leftXaxis,$leftYaxis, $maxX, $size){
+    function showComment($conn, $appointmentID,$leftXaxis,$leftYaxis, $maxX, $size){
 
-        $contentData = getContentDetail($appointmentID, "COMMENT");
+        $contentData = getContentDetail($conn, $appointmentID, "COMMENT");
 
         $con = mysql_fetch_assoc($contentData);
         if($con){
@@ -334,9 +334,9 @@ class BasicFunction extends mPDF
 
         return $this->GetY();
     }
-    function show_diagnosis($appointmentID,$xAxis,$yAxis, $size ){
+    function show_diagnosis($conn, $appointmentID,$xAxis,$yAxis, $size ){
 
-        $resultData = getPrescribedDiagnosis($appointmentID);
+        $resultData = getPrescribedDiagnosis($conn, $appointmentID);
 
 
 
@@ -355,25 +355,25 @@ class BasicFunction extends mPDF
         return $this->GetY();
 
     }
-    function show_Complain($appointmentID,$xAxis,$yAxis, $maxX , $size) {
+    function show_Complain($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size) {
 
-        $resultData = getPrescribedComplain($appointmentID);
-
-
+        $resultData = getPrescribedComplain($conn, $appointmentID);
 
 
-        if(mysql_num_rows($resultData) > 0){
+
+
+        if(mysqli_num_rows($resultData) > 0){
             $this->SetFont('Times','B',$size + 1 );
             $this->SetXY($xAxis, $yAxis);
             $this->MultiCell($maxX,5,"Chief Complaints");
             $yAxis += 6;
 
-        }if(mysql_num_rows($resultData) == 0){
+        }if(mysqli_num_rows($resultData) == 0){
             return $yAxis - 5;
         }
         $this->SetFont('Times','',$size);
         $var = 1;
-        while($row=  mysql_fetch_array($resultData)){
+        while($row=  mysqli_fetch_array($resultData)){
 
             $symptomName = $row['symptomName'];
             $durationNum = $row['durationNum'];
@@ -396,9 +396,9 @@ class BasicFunction extends mPDF
         return $this->GetY();
 
     }
-    function show_Family_History($appointmentID,$xAxis,$yAxis, $maxX , $size){
+    function show_Family_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size){
 
-        $resultData = getPrescribedFamilyDisease($appointmentID);
+        $resultData = getPrescribedFamilyDisease($conn, $appointmentID);
 
         $this->SetFont('Times','',$size);
 
@@ -428,10 +428,10 @@ class BasicFunction extends mPDF
 
         return $this->GetY();
     }
-    function show_Past_History($appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedearText){
+    function show_Past_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedearText){
 
 
-        $resultData = getPrescribedPastDisease2($appointmentID, $status);
+        $resultData = getPrescribedPastDisease2($conn, $appointmentID, $status);
 
 
 
@@ -460,10 +460,10 @@ class BasicFunction extends mPDF
 
         return $this->GetY();
     }
-    function show_History($appointmentID,$xAxis,$yAxis, $maxX , $size, $typeCode, $headerText){
+    function show_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $typeCode, $headerText){
 
 
-        $resultData = getPrescribedHistory($appointmentID, $typeCode);
+        $resultData = getPrescribedHistory($conn, $appointmentID, $typeCode);
 
 
 
@@ -492,11 +492,11 @@ class BasicFunction extends mPDF
         return $this->GetY();
 
     }
-    function show_ref_doc($appointmentID,$xAxis,$yAxis,$size){
+    function show_ref_doc($conn, $appointmentID,$xAxis,$yAxis,$size){
 
         $this->SetFont('Times','',$size);
 
-        $resultData = getPrescribedReffredDoctor($appointmentID);
+        $resultData = getPrescribedReffredDoctor($conn, $appointmentID);
 
         $rec = mysql_fetch_assoc($resultData);
 
@@ -512,10 +512,10 @@ class BasicFunction extends mPDF
 
     }
     //TODO : remove static bangla
-    function show_nextVisit($appointmentID,$xAxis,$yAxis,$size){
+    function show_nextVisit($conn, $appointmentID,$xAxis,$yAxis,$size){
 
 
-        $resultData = getPrescribedNextVisit($appointmentID);
+        $resultData = getPrescribedNextVisit($conn, $appointmentID);
 
         $rec = mysql_fetch_assoc($resultData);
 
@@ -571,12 +571,12 @@ class BasicFunction extends mPDF
         }
         return $this->GetY();
     }
-    function show_vital($appointmentID,$xAxis, $yAxis, $maxX, $size){
+    function show_vital($conn, $appointmentID,$xAxis, $yAxis, $maxX, $size){
 
 
 
 
-        $resultData = getPrescribedVital($appointmentID);
+        $resultData = getPrescribedVital($conn, $appointmentID);
 
         if(mysql_num_rows($resultData) > 0){
             $this->SetFont('Times','B',$size + 1 );
@@ -601,11 +601,11 @@ class BasicFunction extends mPDF
 
         return $this->GetY();
     }
-    function show_inv($appointmentID, $xAxis,$yAxis,$maxX,$size) {
+    function show_inv($conn, $appointmentID, $xAxis,$yAxis,$maxX,$size) {
 
         $this->SetFont('Times','',$size);
 
-        $resultData = getPrescribedInv($appointmentID);
+        $resultData = getPrescribedInv($conn, $appointmentID);
 
         if(mysql_num_rows($resultData) > 0){
 

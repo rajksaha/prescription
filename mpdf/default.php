@@ -1,7 +1,6 @@
 <?php
 $date = date('d M, Y');
 include_once("BasicFunction.php");
-include_once('docFeed/config.inc');
 include_once('docFeed/appointment.php');
 include_once('docFeed/doctor.php');
 include_once('docFeed/patient.php');
@@ -30,12 +29,12 @@ function Footer() {
 
 
 
-function Show_med($appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
+function Show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
 
-        $resultData = getPresCribedDrugs($appointmentID);
+        $resultData = getPresCribedDrugs($conn, $appointmentID);
 
 
-        if(mysql_num_rows($resultData) > 0){
+        if(mysqli_num_rows($resultData) > 0){
             $this->SetFont('nikosh','B',$size);
             $this->SetXY($xAxis , $yAxis);
             $this->MultiCell(40,5,"Rx");
@@ -52,7 +51,7 @@ function Show_med($appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
         $durationCell = 70;
         $whenCell = 15;
         $var = 1;
-        while($row=  mysql_fetch_array($resultData)){
+        while($row=mysqli_fetch_array($resultData)){
 
             //$this->SetFont('Times','',$size + 2);
 
@@ -86,12 +85,12 @@ function Show_med($appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
 
 
             $this->SetXY($xAxis + 5, $yAxis + 6);
-            $doseData = getPreiodicList($drugPrescribeID);
+            $doseData = getPreiodicList($conn, $drugPrescribeID);
 
 
 
             if($doseTypeID != -1){
-                $dose = mysql_fetch_assoc($doseData);
+                $dose = mysqli_fetch_assoc($doseData);
                 $drugDose = $dose['dose'];
                 $drugNoDay = $dose['numOfDay'];
                 $drugNoDayType = $dose['bngDurationName'];
@@ -123,7 +122,7 @@ function Show_med($appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
                 $index= 0;
                 $periodText = "";
 
-                while ($dose = mysql_fetch_array($doseData)){
+                while ($dose = mysqli_fetch_array($doseData)){
                     $drugDose = $dose['dose'];
                     $drugNoDay = $dose['numOfDay'];
                     $drugNoDayType = $dose['bangla'];
@@ -243,9 +242,9 @@ function preparePrescription($conn, $appointmentID){
 	$pdf->Line($rightXaxis - 10 , 53, $rightXaxis - 10, 260, $lineStyle);
 	
 	
-	$rightYaxis = $pdf->Show_med($appointmentID,$rightXaxis, $rightYaxis,$size + 2, $pageNum, $pdf);
+	$rightYaxis = $pdf->Show_med($conn, $appointmentID,$rightXaxis, $rightYaxis,$size + 2, $pageNum, $pdf);
 	$rightYaxis = $pdf->checkForPageChange($rightYaxis, $pdf->page);
-	$rightYaxis = $pdf->Show_advice($appointmentID,$rightXaxis,$rightYaxis + 10,$size + 1,$maxXForRight);
+	$rightYaxis = $pdf->Show_advice($conn, $appointmentID,$rightXaxis,$rightYaxis + 10,$size + 1,$maxXForRight);
 	$rightYaxis = $pdf->checkForPageChange($rightYaxis, $pdf->page);
 	//$rightYaxis = $pdf-> show_nextVisit($appointmentID,$rightXaxis,$rightYaxis + 10 ,$size +2);
 	
@@ -254,18 +253,18 @@ function preparePrescription($conn, $appointmentID){
 	$pageNum = 1;
 	$pdf->page = $pageNum;
 	
-	if($appType != 4){
-		$patientImage = $pdf->ShowPatInfo($patientID, 45, $appointmentID);
-		if($patientImage != null){
-			$pdf->displayImage($username, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
-			$gap = $gap + $photoSize;
-		}
-	}
+// 	if($appType != 4){
+// 		$patientImage = $pdf->ShowPatInfo($patientID, 45, $appointmentID);
+// 		if($patientImage != null){
+// 			$pdf->displayImage($username, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
+// 			$gap = $gap + $photoSize;
+// 		}
+// 	}
 	
-	$leftYaxis=$pdf->Show_Complain($appointmentID,$leftXaxis,$leftYaxis + $gap, $maxX , $size);
+	$leftYaxis=$pdf->Show_Complain($conn, $appointmentID,$leftXaxis,$leftYaxis + $gap, $maxX , $size);
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	$leftYaxis=$pdf->Show_vital($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX , $size);
- 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+ 	/* $leftYaxis=$pdf->Show_vital($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX , $size);
+ 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
 // 	$leftYaxis=$pdf->Show_History($appointmentID,$leftXaxis,$leftYaxis +5, $maxX , $size, "RISK", "Risk Factors");
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 // 	 $leftYaxis=$pdf->Show_Past_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 0 , "Past Disease");
@@ -280,10 +279,10 @@ function preparePrescription($conn, $appointmentID){
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 // 	 $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 // 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	$leftYaxis=$pdf->Show_inv($appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
+ 	/* $leftYaxis=$pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	$leftYaxis = $pdf->Show_diagnosis($appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
- 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+ 	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
+ 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
 	/* $leftYaxis=$pdf->showComment($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	 $leftYaxis=$pdf-> show_ref_doc($appointmentID,$leftXaxis,$leftYaxis + 5,$size);
