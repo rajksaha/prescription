@@ -281,9 +281,9 @@ function preparePrescription($conn, $appointmentID){
 	$leftYaxis=$pdf->Show_Family_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	echo '\n Show_Family_History: ' .$leftYaxis;
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLD_DRUG" , "Old Drug(s)");
+	/* $leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLD_DRUG" , "Old Drug(s)");
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)");
+	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)"); */
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	echo '\n Show_Drug_History: ' .$leftYaxis;
 	/* $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size); */

@@ -33014,13 +33014,9 @@ function checkForPageChange($yaxis, $pageNum){
         }if(mysqli_num_rows($contentData) == 0){
             return $yAxis - 5;
         }
-
         $this->SetFont('nikosh','',$size);
-
         while($row=  mysqli_fetch_array($contentData)){
-
             $data = $row['shortName'];
-
             $yAxis =  $this->GetY();
             $yAxis = $this->checkForPageChange($yAxis, $this->page);
             $this->SetXY($xAxis, $yAxis);
