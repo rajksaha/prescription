@@ -4,7 +4,6 @@ header("Content-Type:application/json");
 if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 	include_once '../mpdf/default.php';
 	include_once '../config/database.php';
-	print("inside API");
 	$host = "bottom-up-dev.c8lq1wttwtce.ap-southeast-1.rds.amazonaws.com:3306";
 	$db_name = "doctor_feed";
 	$username = "admin";
@@ -15,7 +14,6 @@ if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 		die();
 	}
 	$appointmentID = $_GET['appointmentID'];
-	print("After connection");
 	$pdf = new PDF();
 	return $pdf.preparePrescription($con, $appointmentID);
 }else{
