@@ -215,7 +215,7 @@ function showDocInfo($username, $yAxis, $size){
 function preparePrescription($conn, $appointmentID){
 	$pdf = new PDF('','A4',10,'nikosh');
 	$pdf->WriteHTML('');
-	
+	echo "inside";
 	//$pdf->SetAutoPageBreak(true, 12);
 	
 	$appData = getAppointmentInfo($conn,$appointmentID);
