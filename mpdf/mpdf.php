@@ -32732,7 +32732,7 @@ function checkForPageChange($yaxis, $pageNum){
     }
     return $yaxis;
 }
- function displayImage ($doctorId, $patientImage,$xAxis, $yAxis, $size){
+ function displayImage ($conn, $doctorId, $patientImage,$xAxis, $yAxis, $size){
         $doctorData = getDoctorInfo($doctorId);
 
         if($doctorData['photoSupport'] == 1){
@@ -33019,7 +33019,7 @@ function checkForPageChange($yaxis, $pageNum){
 
         while($row=  mysqli_fetch_array($contentData)){
 
-            $data = $row['detail'];
+            $data = $row['shortName'];
 
             $yAxis =  $this->GetY();
             $yAxis = $this->checkForPageChange($yAxis, $this->page);
@@ -33032,20 +33032,24 @@ function checkForPageChange($yaxis, $pageNum){
     }
     function showComment($conn, $appointmentID,$leftXaxis,$leftYaxis, $maxX, $size){
 
-        $contentData = getContentDetail($conn, $appointmentID, "COMMENT");
+        $contentData = getComment($conn, $appointmentID);
 
-        $con = mysqli_fetch_assoc($contentData);
-        if($con){
-            $this->SetFont('nikosh','B',$size);
-            $this->SetXY($leftXaxis, $leftYaxis);
-            $this->MultiCell($maxX,5,"Clinical Note");
-            $leftYaxis += 5;
-            $data = $con['detail'];
-            $this->SetXY($leftXaxis, $leftYaxis);
-            $this->SetFont('nikosh','',$size );
-            $this->MultiCell($maxX,5, "$data", 0);
+        $this->SetFont('nikosh','B',$size);
+        $this->SetXY($leftXaxis, $leftYaxis);
+        $this->MultiCell($maxX,5,"Clinical Note");
+        $this->SetFont('nikosh','',$size);
+        foreach ($contentData as $comment) {
+        	$leftYaxis += 5;
+        	if($comment->header != 'No Header'){
+        		$this->SetXY($leftXaxis, $leftYaxis);
+        		$this->MultiCell($maxX,5,$comment->header);
+        	}
+            foreach ($comment->noteList as $note) {
+            	$leftYaxis = $this->GetY();
+            	$this->SetXY($leftXaxis+3, $leftYaxis);
+            	$this->MultiCell($maxX,5, ".$note", 0);
+            }
         }
-
         return $this->GetY();
     }
     function show_diagnosis($conn, $appointmentID,$xAxis,$yAxis, $size ){
@@ -33107,119 +33111,97 @@ function checkForPageChange($yaxis, $pageNum){
 
     }
     function show_Family_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size){
-
-        $resultData = getPrescribedFamilyDisease($conn, $appointmentID);
-
-
-
-        if(mysqli_num_rows($resultData) > 0){
-
+        $resultData = getPresFamilyDisease($conn, $appointmentID);
+        if(!$resultData){
+        	return $yAxis;
+        }else if(mysqli_num_rows($resultData) > 0){
             $this->SetFont('nikosh','B',$size);
             $this->SetXY($xAxis, $yAxis);
             $this->MultiCell($maxX,5,"Family Disease");
             $yAxis += 6;
-
-        }if(mysqli_num_rows($resultData) == 0){
-            return $yAxis - 5;
-        }
-
-        $this->SetFont('nikosh','',$size);
-        while($row=  mysqli_fetch_array($resultData)){
-
-            $diseaseName = $row['diseaseName'];
-            $relationName = $row['relationName'];
-
-            $yAxis =  $this->GetY();
-            $yAxis = $this->checkForPageChange($yAxis, $this->page);
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,"$diseaseName - $relationName");
+            $this->SetFont('nikosh','',$size);
+            while($row=  mysqli_fetch_array($resultData)){
+            	$diseaseName = $row['diseaseName'];
+            	$relationName = $row['relationName'];
+            	$yAxis =  $this->GetY();
+            	$yAxis = $this->checkForPageChange($yAxis, $this->page);
+            	$this->SetXY($xAxis, $yAxis);
+            	$this->MultiCell($maxX,5,".$diseaseName - $relationName");
+            
+            }
 
         }
 
         return $this->GetY();
     }
-    function show_Past_History($appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedearText){
-
-
-        $resultData = getPrescribedPastDisease2($appointmentID, $status);
-
-
-
-
-        if(mysqli_num_rows($resultData) > 0){
+    function show_Past_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedearText){
+        $resultData = getPresPastDisease($conn, $appointmentID, $status);
+        if(!$resultData){
+        	return $yAxis;
+        }else if($resultData && mysqli_num_rows($resultData) > 0){
             $this->SetFont('nikosh','B',$size);
             $this->SetXY($xAxis, $yAxis);
             $this->MultiCell($maxX,5,$hedearText);
             $yAxis += 6;
-
-        }if(mysqli_num_rows($resultData) == 0){
-            return $yAxis - 5;
+            $this->SetFont('nikosh','',$size);
+            while($row=mysqli_fetch_array($resultData)){
+            	$diseaseName = $row['diseaseName'];
+            	$yAxis =  $this->GetY();
+            	$yAxis = $this->checkForPageChange($yAxis, $this->page);
+            	$this->SetXY($xAxis, $yAxis);
+            	$this->MultiCell($maxX,5,".$diseaseName");
+            }
         }
 
-        $this->SetFont('nikosh','',$size);
-
-        while($row=  mysqli_fetch_array($resultData)){
-
-            $diseaseName = $row['diseaseName'];
-
-            $yAxis =  $this->GetY();
-            $yAxis = $this->checkForPageChange($yAxis, $this->page);
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,"$diseaseName");
-
-        }
+        
 
         return $this->GetY();
     }
-    function show_History($appointmentID,$xAxis,$yAxis, $maxX , $size, $typeCode, $headerText){
+    function show_History($conn, $appointmentID,$doctorID, $xAxis,$yAxis, $maxX , $size){
+    	
+    	$customHistoryList = getDotorHistory($conn, $doctorID);
+    	
+    	while($cus=  mysqli_fetch_array($customHistoryList)){
+    		$typeCode = $cus['defaultName'];
+    		$headerText = $cus['menuHeader'];
+    		$resultData = getCustomHistory($conn, $appointmentID, $typeCode);
+    		if(mysqli_num_rows($resultData) > 0){
+    			$this->SetFont('nikosh','B',$size);
+    			$this->SetXY($xAxis, $yAxis);
+    			$this->MultiCell(40,5,$headerText);
+    			$yAxis = $yAxis + 6;
+    			$this->SetFont('nikosh','',$size);
+    			while($row=  mysqli_fetch_array($resultData)){
+    				$historyResult = $row['historyResult'];
+    				$historylDisplayName = $row['historyName'];
+    				$yAxis = $this->checkForPageChange($yAxis, $this->page);
+    				$this->SetXY($xAxis, $yAxis);
+    				$this->MultiCell($maxX,5,".$historylDisplayName:  $historyResult");
+    				$yAxis = $yAxis + 5;
+    			}
+    		}
+    		
+    	}
+        
 
+        return $this->GetY();
 
-        $resultData = getPrescribedHistory($appointmentID, $typeCode);
-
-
-
-
+    }
+    function show_ref_doc($conn, $appointmentID,$xAxis,$yAxis,$size){
+        $resultData = getPrescribedReffredDoctor($conn, $appointmentID);
         if(mysqli_num_rows($resultData) > 0){
-            $this->SetFont('nikosh','B',$size);
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell(40,5,$headerText);
-            $yAxis += 6;
-
-        }if(mysqli_num_rows($resultData) == 0){
-            return $yAxis - 5;
+        	$this->SetFont('nikosh','B',$size);
+        	$this->SetXY($xAxis, $yAxis);
+        	$this->MultiCell($maxX,5,"Refd. to");
+        	$yAxis += 6;
+        	$this->SetFont('nikosh','',$size);
+        	while($row=  mysqli_fetch_array($resultData)){
+        		$this->SetXY($xAxis, $this->GetY());
+        		$address = $row['doctorAddress'];
+        		$name = $row['doctorName'];
+        		$this->MultiCell($maxX,5,".$name - $address");
+        	}
         }
-        $this->SetFont('nikosh','',$size);
-        while($row=  mysqli_fetch_array($resultData)){
-
-            $historyResult = $row['historyResult'];
-            $historylDisplayName = $row['historyName'];
-
-            $yAxis =  $this->GetY();
-            $yAxis = $this->checkForPageChange($yAxis, $this->page);
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,"$historylDisplayName:  $historyResult");
-
-        }
-
-        return $this->GetY();
-
-    }
-    function show_ref_doc($appointmentID,$xAxis,$yAxis,$size){
-
-        $this->SetFont('nikosh','',$size);
-
-        $resultData = getPrescribedReffredDoctor($appointmentID);
-
-        $rec = mysqli_fetch_assoc($resultData);
-
-        if($rec['doctorName'] != ""){
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell(90,5, "Refd. to: " . $rec['doctorName']);
-            $yAxis =  $this->GetY();
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell(90,5, $rec['doctorAdress']);
-        }
-
         return $this->GetY();
 
     }

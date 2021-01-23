@@ -13,6 +13,9 @@ include_once('docFeed/advice.php');
 include_once('docFeed/vital.php');
 include_once('docFeed/history.php');
 include_once('docFeed/nextVisit.php');
+include_once('docFeed/contentDetail.php');
+include_once('docFeed/refDoctor.php');
+include_once('docFeed/history.php');
 
 class PDF extends mPDF {
 	private $conn;
@@ -218,6 +221,7 @@ function preparePrescription($conn, $appointmentID){
 	$appData = getAppointmentInfo($conn,$appointmentID);
 	$appType = $appData['appointmentType'];
 	$patientID = $appData['patientID'];
+	$doctorID = $appData['doctorID'];
 	$lineStyle = array('width' => 20, 'cap' => 'butt', 'join' => 'miter', 'dash' => '', 'phase' => 0, 'color' => array(255, 0, 0));
 	$pdf->Line(10, 53, 195, 53, $linestyle);
 	$pdf->Line(10, 60, 195, 60, $linestyle);
@@ -256,7 +260,7 @@ function preparePrescription($conn, $appointmentID){
 	if($appType != 4){
 		$patientImage = $pdf->ShowPatInfo($conn, $patientID, 45, $appointmentID);
 		if($patientImage != null){
-			$pdf->displayImage($username, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
+			$pdf->displayImage($conn, $doctorID, $patientImage,$leftXaxis,$leftYaxis,$photoSize);
 			$gap = $gap + $photoSize;
 		}
 	}
@@ -265,36 +269,34 @@ function preparePrescription($conn, $appointmentID){
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis=$pdf->Show_vital($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	$leftYaxis=$pdf->Show_History($appointmentID,$leftXaxis,$leftYaxis +5, $maxX , $size, "RISK", "Risk Factors");
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->Show_Past_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 0 , "Past Disease");
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->Show_Past_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 1 , "Associated Illness");
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->Show_Family_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->Show_Drug_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLDDRUGS" , "Old Drugs");
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->Show_Drug_History($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRDRUGS" , "Current Drugs");
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-// 	 $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
-// 	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	$leftYaxis=$pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
+	$leftYaxis=$pdf->Show_History($conn, $appointmentID, $doctorID, $leftXaxis,$leftYaxis +5, $maxX , $size);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->Show_Past_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 0 , "Past Disease");
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->Show_Past_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , 1 , "Associated Illness");
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->Show_Family_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLD_DRUG" , "Old Drug(s)");
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)");
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	/* $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size); */
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+ 	$leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	/* $leftYaxis=$pdf->showComment($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
-	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	 $leftYaxis=$pdf-> show_ref_doc($appointmentID,$leftXaxis,$leftYaxis + 5,$size);
-	 $leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
+	$leftYaxis=$pdf->showComment($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf-> show_ref_doc($conn, $appointmentID,$leftXaxis,$leftYaxis + 5,$size);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	
 	if($yPageNo > $pdf->page){
 		$pdf->page = $yPageNo;
 		$pdf->Line($rightXaxis - 10 , 60, $rightXaxis - 10, 260, $lineStyle);
 	}
 	
-	//$pdf-> show_diagnosis($appointmentID,15,55,$size);
-	//$pdf-> show_ref_doc($appointmentID,15,260,$size);
 	//$pdf->showDocInfo($username, 15, $size + 2);
 	
 	$pdf->Output('');

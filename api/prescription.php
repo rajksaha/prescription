@@ -14,7 +14,7 @@ if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 		echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		die();
 	}
-	$appointmentID = 4;
+	$appointmentID = $_GET['appointmentID'];
 	print("After connection");
 	$pdf = new PDF();
 	return $pdf.preparePrescription($con, $appointmentID);
