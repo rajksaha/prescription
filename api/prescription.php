@@ -16,6 +16,7 @@ if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 	$appointmentID = $_GET['appointmentID'];
 	
 	try {
+		echo 'Message: ' .$appointmentID;
 		$pdf = new PDF();
 		$data = $pdf.preparePrescription($con, $appointmentID);
 		echo 'Message: Success';
