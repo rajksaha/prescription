@@ -33001,19 +33001,16 @@ function checkForPageChange($yaxis, $pageNum){
 
     }
     function Show_Drug_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $conentType , $hedearText){
-
-
+    	echo "inside Show_Drug_History" .$conentType . $hedearText;
         $contentData = getContentDetail($conn, $appointmentID, $conentType);
-
-        if(mysqli_num_rows($contentData) > 0){
-            $this->SetFont('nikosh','B',$size );
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,$hedearText);
-            $yAxis += 6;
-
-        }if(mysqli_num_rows($contentData) == 0){
-            return $yAxis - 5;
+        if(mysqli_num_rows($contentData) == 0){
+        	return $this->GetY();
         }
+        
+        $this->SetFont('nikosh','B',$size );
+        $this->SetXY($xAxis, $yAxis);
+        $this->MultiCell($maxX,5,$hedearText);
+        $yAxis += 6;
         $this->SetFont('nikosh','',$size);
         while($row=  mysqli_fetch_array($contentData)){
             $data = $row['shortName'];
@@ -33028,24 +33025,27 @@ function checkForPageChange($yaxis, $pageNum){
     }
     function showComment($conn, $appointmentID,$leftXaxis,$leftYaxis, $maxX, $size){
 
-        $contentData = getComment($conn, $appointmentID);
-
-        $this->SetFont('nikosh','B',$size);
-        $this->SetXY($leftXaxis, $leftYaxis);
-        $this->MultiCell($maxX,5,"Clinical Note");
-        $this->SetFont('nikosh','',$size);
-        foreach ($contentData as $comment) {
-        	$leftYaxis += 5;
-        	if($comment->header != 'No Header'){
-        		$this->SetXY($leftXaxis, $leftYaxis);
-        		$this->MultiCell($maxX,5,$comment->header);
+         $contentData = getComment($conn, $appointmentID);
+         
+        if(count($contentData) > 0){
+        	$this->SetFont('nikosh','B',$size);
+        	$this->SetXY($leftXaxis, $leftYaxis);
+        	$this->MultiCell($maxX,5,"Clinical Note");
+        	$this->SetFont('nikosh','',$size);
+        	foreach ($contentData as $comment) {
+        		$leftYaxis += 5;
+        		if($comment->header != 'No Header'){
+        			$this->SetXY($leftXaxis, $leftYaxis);
+        			$this->MultiCell($maxX,5,"$comment->header");
+        		}
+        		foreach ($comment->noteList as $note) {
+        			$leftYaxis = $this->GetY();
+        			$this->SetXY($leftXaxis+3, $leftYaxis);
+        			$this->MultiCell($maxX,5, ".$note", 0);
+        		}
         	}
-            foreach ($comment->noteList as $note) {
-            	$leftYaxis = $this->GetY();
-            	$this->SetXY($leftXaxis+3, $leftYaxis);
-            	$this->MultiCell($maxX,5, ".$note", 0);
-            }
         }
+        
         return $this->GetY();
     }
     function show_diagnosis($conn, $appointmentID,$xAxis,$yAxis, $size ){
