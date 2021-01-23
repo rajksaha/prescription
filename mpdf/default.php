@@ -297,7 +297,8 @@ function preparePrescription($conn, $appointmentID){
 	}
 	
 	//$pdf->showDocInfo($username, 15, $size + 2);
-	
+	echo '$leftYaxis ' .$leftYaxis;
+	echo 'before ' .$pdf;
 	$pdf->Output('');
 	return $pdf;
 }
