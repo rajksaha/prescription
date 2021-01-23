@@ -14,9 +14,16 @@ if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 		die();
 	}
 	$appointmentID = $_GET['appointmentID'];
-	$pdf = new PDF();
-	$data = $pdf.preparePrescription($con, $appointmentID);
-	echo $data;
+	
+	try {
+		$pdf = new PDF();
+		$data = $pdf.preparePrescription($con, $appointmentID);
+		echo 'Message: Success';
+	}
+	//catch exception
+	catch(Exception $e) {
+		echo 'Message: ' .$e->getMessage();
+	}
 	return $data;
 }else{
 	response(NULL, NULL, 400,"Invalid Request");
