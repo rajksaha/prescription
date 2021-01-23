@@ -33123,9 +33123,7 @@ function checkForPageChange($yaxis, $pageNum){
             	$yAxis = $this->checkForPageChange($yAxis, $this->page);
             	$this->SetXY($xAxis, $yAxis);
             	$this->MultiCell($maxX,5,".$diseaseName - $relationName");
-            
             }
-
         }
 
         return $this->GetY();
