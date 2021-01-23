@@ -288,14 +288,14 @@ function preparePrescription($conn, $appointmentID){
 	echo '\n Show_Drug_History: ' .$leftYaxis;
 	/* $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size); */
 	//$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	$leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
+ 	/* $leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	$leftYaxis=$pdf->showComment($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	$leftYaxis=$pdf-> show_ref_doc($conn, $appointmentID,$leftXaxis,$leftYaxis + 5,$size);
-	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
 	echo '\n show_ref_doc: ' .$leftYaxis;
 	if($yPageNo > $pdf->page){
 		$pdf->page = $yPageNo;
