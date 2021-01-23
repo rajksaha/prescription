@@ -281,21 +281,21 @@ function preparePrescription($conn, $appointmentID){
 	$leftYaxis=$pdf->Show_Family_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	echo '\n Show_Family_History: ' .$leftYaxis;
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	/* $leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLD_DRUG" , "Old Drug(s)");
+	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "OLD_DRUG" , "Old Drug(s)");
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)"); */
+	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)");
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	echo '\n Show_Drug_History: ' .$leftYaxis;
 	/* $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size); */
 	//$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
- 	/* $leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
+ 	$leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	$leftYaxis=$pdf->showComment($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	$leftYaxis=$pdf-> show_ref_doc($conn, $appointmentID,$leftXaxis,$leftYaxis + 5,$size);
-	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page); */
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	echo '\n show_ref_doc: ' .$leftYaxis;
 	if($yPageNo > $pdf->page){
 		$pdf->page = $yPageNo;
