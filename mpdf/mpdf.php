@@ -33001,7 +33001,6 @@ function checkForPageChange($yaxis, $pageNum){
 
     }
     function Show_Drug_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $conentType , $hedearText){
-    	echo "inside Show_Drug_History" .$conentType . $hedearText;
         $contentData = getContentDetail($conn, $appointmentID, $conentType);
         if(mysqli_num_rows($contentData) == 0){
         	return $this->GetY();

@@ -251,7 +251,6 @@ function preparePrescription($conn, $appointmentID){
 	$rightYaxis = $pdf->checkForPageChange($rightYaxis, $pdf->page);
 	$rightYaxis = $pdf-> show_nextVisit($conn, $appointmentID,$rightXaxis,$rightYaxis + 10 ,$size +2);
 	
-	echo '\n show_nextVisit: ' .$rightYaxis;
 	$yPageNo = $pdf->page;
 	$pageNum = 1;
 	$pdf->page = $pageNum;
