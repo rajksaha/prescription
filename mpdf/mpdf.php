@@ -32911,40 +32911,40 @@ function checkForPageChange($yaxis, $pageNum){
         return $full_str;
 
     }
-    function showClinicalRecord($appointmentID, $xAxis,$yAxis,$maxX,$size) {
+    function showClinicalRecord($conn, $appointmentID, $xAxis,$yAxis,$maxX,$size) {
 
 
-        $resultData = getClinicalDate($appointmentID, 'CLINICAL_RECORD');
+        $resultData = getContentDetail($conn, $appointmentID, 'FOLLOW_UP');
 
-        if(mysqli_num_rows($resultData) > 0){
-            $this->SetFont('nikosh','B',$size);
-            $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,"Clinical Record");
-            $yAxis += 6;
-
-        }if(mysqli_num_rows($resultData) == 0){
-            return $yAxis - 5;
+        if(mysqli_num_rows($resultData) == 0){
+        	return $this->GetY();
         }
+        
+        $this->SetFont('nikosh','B',$size);
+        $this->SetXY($xAxis, $yAxis);
+        $this->MultiCell($maxX,5,"Clinical Record");
+        $yAxis += 6;
+        
         $this->SetFont('nikosh','',$size);
         $var = 1;
         while($row=  mysqli_fetch_array($resultData)){
-
-            $code = $row['code'];
+            $entyDate = $row['shortName'];
+            $longDesc = $row['longDesc'];
             $yAxis =  $this->GetY();
             $yAxis = $this->checkForPageChange($yAxis, $this->page);
             $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,"Date: $code");
+            $this->MultiCell($maxX,5,"Date: $entyDate");
             $yAxis = $yAxis + 5;
-            $innerData = getClinicalDetail($appointmentID, 'CLINICAL_RECORD', $code);
-            while($item =  mysqli_fetch_array($innerData)){
-                $data = $item['detail'];
-				$yAxis =  $this->GetY();
-                $this->SetXY($xAxis, $yAxis);
-                $this->MultiCell($maxX,5,". $data");
-                $yAxis = $yAxis + 5;
+            $followUpDeltailList = json_decode($longDesc);
+            foreach ($followUpDeltailList as $obj){
+            	if($obj->result != ''){
+            		$data = $obj->followUpInvName .'-'. $obj->result;
+            		$yAxis =  $this->GetY();
+            		$this->SetXY($xAxis, $yAxis);
+            		$this->MultiCell($maxX,5,". $data");
+            		$yAxis = $yAxis + 5;
+            	}
             }
-
-
         }
 
         return $this->GetY();

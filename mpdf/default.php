@@ -278,8 +278,8 @@ function preparePrescription($conn, $appointmentID){
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
 	$leftYaxis=$pdf->Show_Drug_History($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size , "CURRENT_DRUG" , "Current Drug(s)");
 	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
-	/* $leftYaxis=$pdf->showClinicalRecord($appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size); */
-	//$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
+	$leftYaxis=$pdf->showClinicalRecord($conn, $appointmentID,$leftXaxis,$leftYaxis + 5, $maxX, $size);
+	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis= $pdf->Show_inv($conn, $appointmentID,$leftXaxis,$leftYaxis + 5 , $maxX , $size);
  	$leftYaxis = $pdf->checkForPageChange($leftYaxis, $pdf->page);
  	$leftYaxis = $pdf->Show_diagnosis($conn, $appointmentID, $leftXaxis ,$leftYaxis + 5 ,$size , $maxX);
@@ -293,7 +293,6 @@ function preparePrescription($conn, $appointmentID){
 		$pdf->Line($rightXaxis - 10 , 60, $rightXaxis - 10, 260, $lineStyle);
 	}
 	
-	//$pdf->showDocInfo($username, 15, $size + 2);
 	$pdf->Output('');
 	return $pdf;
 }
