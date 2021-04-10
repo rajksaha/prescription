@@ -11,6 +11,7 @@ function getPresCribedDrugs($conn, $appointmentID){
 			PD.`drugDoseUnit`,
 			PD.`drugWhenID`,
 			PD.`drugAdviceID`,
+			PD.`doseString`,
 			PD.`presNum`,
 			CD.drugName,
 			CD.strength AS drugStrength,

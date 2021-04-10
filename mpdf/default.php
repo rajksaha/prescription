@@ -62,13 +62,14 @@ function Show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
             $drugName = $row['drugName'];
             $drugStr = $row['drugStrength'];
             $drugPrescribeID = $row['presDrugID'];
-            $doseTypeID = $row['doseTypeID'];
+            $doseTypeID = $row['doseTypeCode'];
             $doseTypeName = $row['doseTypeName'];
             $drugDoseInitial = $row['drugDoseUnit'];
             $drugWhen = $row['drugWhenName'];
             $drugWhenID = $row['drugWhenID'];
             $drugAdvice = $row['drugAdviceName'];
             $drugAdviceID = $row['drugAdviceName'];
+            $doseString = $row['doseString'];
 
 
             $yAxis =  $this->GetY() + 2;
@@ -88,12 +89,11 @@ function Show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
 
 
             $this->SetXY($xAxis + 5, $yAxis + 6);
-            $doseData = getPreiodicList($conn, $drugPrescribeID);
-
+            $doseData = json_decode($doseString, TRUE);
 
 
             if($doseTypeID != -1){
-                $dose = mysqli_fetch_assoc($doseData);
+                $dose = $doseData[0];
                 $drugDose = $dose['dose'];
                 $drugNoDay = $dose['numOfDay'];
                 $drugNoDayType = $dose['bngDurationName'];
@@ -116,47 +116,39 @@ function Show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
                 }
 
 
-                if($drugNoDay == 0){
-                    $drugNoDay = "";
-                }
-                $restOftheString = "- $drugWhen - $drugAdvice - $drugNoDay $drugNoDayType";
+            		if($drugDurType >  4){
+                    	$drugNoDay = "";
+                    }
+                $restOftheString = "- $drugWhen $drugAdvice $drugNoDay $drugNoDayType";
 
             }else{
                 $index= 0;
                 $periodText = "";
 
-                while ($dose = mysqli_fetch_array($doseData)){
+                foreach ($doseData as $dose){
                     $drugDose = $dose['dose'];
                     $drugNoDay = $dose['numOfDay'];
-                    $drugNoDayType = $dose['bangla'];
+                    $drugDurType = $dose['durationType'];
+                    $drugNoDayType = $dose['bngDurationName'];
 
                     $drugDose = str_replace("-","+", $drugDose);
-                    if($doseTypeID == 1){
-                        if($drugAdviceID == 14){
-                            $drugDose =  "$drugDose + 0 + 0";
-                        }else if ($drugAdviceID == 15){
-                            $drugDose =  "0 + 0 + $drugDose";
-                        }else{
-                            $drugDose =  "0 + $drugDose + 0";
-                        }
-
-                    }else if($doseTypeID == 2){
-                        list($num,$type) = explode('+', $drugDose, 2);
-                        $drugDose =  "$num + 0 + $type";
-                    }
 
                     $text = "";
                     if($drugDoseInitial == ""){
                         $text = "($drugDose)";
                     }else{
-                        $text = "($drugDose) $drugDoseInitial $drugNoDay $drugNoDayType";
+                        $text = "($drugDose) $drugDoseInitial ";
                     }
 
+                    if($drugDurType >  4){
+                    	$drugNoDay = "";
+                    }
 	                if($index == 0){
                         $periodText = 'প্রথম'. " $drugNoDay $drugNoDayType $text";
                     }else{
                         $periodText = "$periodText". " তারপর " . " $text $drugNoDay $drugNoDayType";
                     }
+                    //$periodText = "$periodText". " ---  ". $drugDose;
                     $index++;
 
                 }
