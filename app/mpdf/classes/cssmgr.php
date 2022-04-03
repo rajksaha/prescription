@@ -1133,10 +1133,16 @@ function MergeCSS($inherit,$tag,$attr) {
 	if (isset($attr['CLASS'])) {
 		$classes = preg_split('/\s+/',$attr['CLASS']);
 	}
-	if (!isset($attr['ID'])) { $attr['ID']=''; }
+	if (!isset($attr['ID'])) { 
+		$attr = array();
+		$attr['ID']=''; 
+	}
 	// mPDF 6
 	$shortlang = '';
-	if (!isset($attr['LANG'])) { $attr['LANG']=''; }
+	if (!isset($attr['LANG'])) { 
+		$attr = array();
+		$attr['LANG']=''; 
+	}
 	else { 
 		$attr['LANG'] = strtolower($attr['LANG']); 
 		if (strlen($attr['LANG']) == 5) {
