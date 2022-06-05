@@ -6,7 +6,7 @@ function getPrescribedComplain($conn, $appointmentID){
 			cs.symptomName,
 			pc.durationNum,
 			pc.durationType,
-			CDT.bangla AS durationTypeName,
+			CDT.english AS durationTypeName,
 			pc.detail
 		FROM prescription_complain pc
 		JOIN content_symptom cs ON pc.symptomID = cs.symptomID

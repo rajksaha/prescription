@@ -9,13 +9,7 @@
     	
     	
 		try {
-			$dsn = "pgsql:host=$host_val;port=$port_val;dbname=$db_val";
-			// make a database connection
-			$pdo = new PDO($dsn, $user_val, $ps_val);
-		
-			if ($pdo) {
-				echo "Connected to the $db_val database successfully!";
-			}
+            echo "v2";
 		} catch (PDOException $e) {
 			echo "ERROR: $e";
 			die($e->getMessage());

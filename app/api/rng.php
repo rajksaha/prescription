@@ -3,7 +3,7 @@
 header("Content-Type:application/json");
 if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 	include_once '../config/config.php';
-	include_once '../mpdf/default.php';
+	include_once '../mpdf/rng_pdf.php';
 		
 		$host        = "host = $host_val";
     	$port        = "port = $port_val";
@@ -27,8 +27,8 @@ if (isset($_GET['appointmentID']) && $_GET['appointmentID']!="") {
 	$appointmentID = $_GET['appointmentID'];
 	
 	try {
-		$defTemplate = new DefTemplate();
-		return $defTemplate->preparePrescription($pdo, $appointmentID);
+		$rng = new RNG();
+		return $rng->preparePrescription($pdo, $appointmentID);
 	}
 	//catch exception
 	catch(Exception $e) {

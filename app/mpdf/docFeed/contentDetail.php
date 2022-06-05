@@ -27,11 +27,11 @@ function getContentDetail($conn, $entityID, $entityType){
 function getComment($conn, $entityID){
 	$contentData = getContentDetail($conn, $entityID, "NOTE");
 	$commentList = array();
-	if($contentData->rowCount() > 0){
-		return $commentList;
+	if($contentData->rowCount() == 0){
+        return $commentList;
 	}
 	while($row = $contentData->fetch(PDO::FETCH_ASSOC)){
-		$header = $row['shortname'];
+        $header = $row['shortname'];
 		$longDesc = $row['longdesc'];
 		if(count($commentList) == 0){
 			array_push($commentList, newComment($header, $longDesc));
@@ -56,7 +56,8 @@ function checkComment($commentList, $header){
 	return null;
 }
 function newComment($header, $longDesc){
-	$commentData->header = $header;
+    $commentData = new class {};
+    $commentData->header = $header;
 	$commentData->noteList = array();
 	array_push($commentData->noteList, $longDesc);
 	return $commentData;

@@ -3,25 +3,18 @@
 function getAppointmentInfo($conn, $appointmentID){
 
 	$sql="SELECT
-		appointmentID AS appointmentID,
-		doctorID AS doctorID,
-		patientID AS patientID,
-		appDate AS appDate,
-		appTime AS appTime,
+		appointmentid,
+		doctorid,
+		patientid,
+		appdate,
+		apptime,
 		status,
-		appointmentType AS appointmentType,
-		updatedBy AS updatedBy,
-		updatedOn AS updatedOn,
-		createdBy AS createdBy,
-		createdOn AS createdOn
+		appointmenttype AS appointmentType
 	FROM appointment
-	WHERE appointmentID = '$appointmentID'";
+	WHERE appointmentid = '$appointmentID'";
 
-	
 	$sth = $conn->prepare($sql);
-	
 	$sth->execute();
-	
 	return $sth->fetch(PDO::FETCH_ASSOC);
 }
 ?>

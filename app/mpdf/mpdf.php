@@ -32740,161 +32740,7 @@ function checkForPageChange($yaxis, $pageNum){
         }
 
     }
-    function show_med($appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
 
-        $resultData = getPresCribedDrugs($appointmentID);
-
-        if(pg_num_rows($resultData) > 10){
-            $size = $size - 2;
-        }
-
-        if(pg_num_rows($resultData) > 0){
-            $this->SetFont('nikosh','B',$size);
-            $this->SetXY($xAxis , $yAxis);
-            $this->MultiCell(40,5,"Rx");
-            $yAxis += 6;
-
-        }else{
-            return $yAxis - 5;
-        }
-
-        $this->SetFont('nikosh','',$size);
-
-        $nameCell = 100;
-        $doseCell = 40;
-        $durationCell = 70;
-        $whenCell = 15;
-        $var = 1;
-        while($row=  pg_fetch_array($resultData)){
-
-            //$this->SetFont('Times','',$size + 2);
-
-            $drugType = $row['typeInitial'];
-            $drugTypeID = $row['drugTypeID'];
-            $drugName = $row['drugName'];
-            $drugStr = $row['drugStrength'];
-            $drugPrescribeID = $row['id'];
-            $drugTime = $row['doseTypeCode'];
-            $drugDoseInitial = $row['drugDoseUnit'];
-            $drugWhen = $row['whenTypeName'];
-            $drugWhenID = $row['drugWhenID'];
-            $drugAdvice = $row['adviceTypeName'];
-            $drugAdviceID = $row['drugAdviceID'];
-
-
-            $yAxis =  $this->GetY() + 2;
-            if(($yAxis + 10)  > 260 ){
-                $this->AddPage();
-                $yAxis = 70;
-            }
-
-
-            $this->SetXY($xAxis, $yAxis);
-            if($drugStr  == ""){
-                $this->MultiCell($nameCell,5,"$var. $drugType. $drugName");
-            }else{
-                $this->MultiCell($nameCell,5,"$var. $drugType. $drugName- $drugStr");
-            }
-            $var = $var + 1;
-
-
-            $this->SetXY($xAxis + 5, $yAxis + 6);
-            //$this->MultiCell($nameCell,5,"$xAxis - $yAxis");
-
-            $doseData = getPreiodicListforPdf($drugPrescribeID);
-
-
-
-            if($drugTime != -1){
-
-                $dose = pg_fetch_assoc($doseData);
-                $drugDose = $dose['dose'];
-                $drugNoDay = $dose['numOfDay'];
-                $drugNoDayType = $dose['bangla'];
-
-                $drugDose = str_replace("-","+", $drugDose);
-                if($drugTime == 1){
-                    if($drugAdviceID == 14 || $drugWhenID == 11 || $drugAdviceID == 54 || $drugAdviceID == 62 || $drugWhenID == 23){
-                        $drugDose =  "$drugDose + 0 + 0";
-                    }else if ($drugAdviceID == 15 || $drugWhenID == 13){
-                        $drugDose =  "0 + 0 + $drugDose";
-                    }else if($drugAdviceID == 16 || $drugWhenID == 12){
-                        $drugDose =  "0 + $drugDose + 0";
-                    }else{
-                        $drugDose =  "0 + 0 + $drugDose";
-                    }
-
-                }else if($drugTime == 2){
-                    list($num,$type) = explode('+', $drugDose, 2);
-                    $drugDose =  "$num + 0 + $type";
-                }
-
-
-                if($drugNoDay == 0){
-                    $drugNoDay = "";
-                }
-                $restOftheString = "- $drugWhen - $drugAdvice - $drugNoDay $drugNoDayType";
-
-            }else{
-                $index= 0;
-                $periodText = "";
-
-                while ($dose = pg_fetch_array($doseData)){
-                    $drugDose = $dose['dose'];
-                    $drugNoDay = $dose['numOfDay'];
-                    $drugNoDayType = $dose['bangla'];
-
-                    $drugDose = str_replace("-","+", $drugDose);
-                    if($drugTime == 1){
-                        if($drugAdviceID == 14){
-                            $drugDose =  "$drugDose + 0 + 0";
-                        }else if ($drugAdviceID == 15){
-                            $drugDose =  "0 + 0 + $drugDose";
-                        }else{
-                            $drugDose =  "0 + $drugDose + 0";
-                        }
-
-                    }else if($drugTime == 2){
-                        list($num,$type) = explode('+', $drugDose, 2);
-                        $drugDose =  "$num + 0 + $type";
-                    }
-
-                    $text = "";
-                    if($drugDoseInitial == ""){
-                        $text = "($drugDose)";
-                    }else{
-                        $text = "($drugDose) $drugDoseInitial $drugNoDay $drugNoDayType";
-                    }
-
-                    if($index == 0){
-                        $periodText = 'প্রথম'. " $drugNoDay $drugNoDayType $text";
-                    }else{
-                        $periodText = "$periodText". " তারপর " . " $text $drugNoDay $drugNoDayType";
-                    }
-                    $index++;
-
-                }
-
-                $restOftheString = "$periodText $drugWhen $drugAdvice";
-                $drugDose = "";
-            }
-
-            $full_str = "";
-            if($drugDoseInitial == "" || $drugDose == ''){
-                $full_str = "$drugDose $restOftheString|";
-            }else{
-                $full_str ="($drugDose)$drugDoseInitial $restOftheString|";
-            }
-
-            $full_str = $this->convertNumberToBangla($full_str);
-
-            $this->MultiCell(110,5,"$full_str");
-            //$yAxis += 8;
-        }
-
-        return $this->GetY();
-
-    }
 
 function convertNumberToBangla($full_str){
 
@@ -32922,7 +32768,7 @@ function convertNumberToBangla($full_str){
         
         $this->SetFont('nikosh','B',$size);
         $this->SetXY($xAxis, $yAxis);
-        $this->MultiCell($maxX,5,"Clinical Record");
+        $this->MultiCell($maxX,5,"Investigation Reports");
         $yAxis += 6;
         
         $this->SetFont('nikosh','',$size);
@@ -32950,25 +32796,15 @@ function convertNumberToBangla($full_str){
         return $this->GetY();
 
     }
-    function showPatInfo($conn, $patientID, $yAxis, $appointmentID){
-
+    function showPatInfo($conn, $patientID, $yAxis, $appointmentID, $appData){
         $rec = getPatientInfo($conn, $patientID);
-
         $patientCode = $rec['patientcode'];
-
-
         $name = $rec['firstname'];
-
-        $age = 20;
-
+        $age = $rec['age'];
         $sex = $rec['sex'];
-
         $address = $rec['address'];
-
         $phone = $rec['contactno'];
-
         $date = date('d M,y');
-        
         $this->SetXY(15, $yAxis - 8);
         $this->MultiCell(65, 5, "Phn: $phone");
         
@@ -33015,32 +32851,32 @@ function convertNumberToBangla($full_str){
         
         
     }
-    function showComment($conn, $appointmentID,$leftXaxis,$leftYaxis, $maxX, $size){
-
+    function showComment($conn, $appointmentID, $leftXaxis, $leftYaxis, $maxX, $size){
          $contentData = getComment($conn, $appointmentID);
-         
         if(count($contentData) > 0){
         	$this->SetFont('nikosh','B',$size);
+            $leftYaxis = $this->checkForPageChange($leftYaxis, $this->page);
         	$this->SetXY($leftXaxis, $leftYaxis);
         	$this->MultiCell($maxX,5,"Clinical Note");
         	$this->SetFont('nikosh','',$size);
         	foreach ($contentData as $comment) {
         		$leftYaxis += 5;
+                $leftYaxis = $this->checkForPageChange($leftYaxis, $this->page);
         		if($comment->header != 'No Header'){
         			$this->SetXY($leftXaxis, $leftYaxis);
         			$this->MultiCell($maxX,5,"$comment->header");
         		}
         		foreach ($comment->noteList as $note) {
         			$leftYaxis = $this->GetY();
+                    $leftYaxis = $this->checkForPageChange($leftYaxis, $this->page);
         			$this->SetXY($leftXaxis+3, $leftYaxis);
         			$this->MultiCell($maxX,5, ".$note", 0);
         		}
         	}
         }
-        
         return $this->GetY();
     }
-    function show_diagnosis($conn, $appointmentID,$xAxis,$yAxis, $size ){
+    function show_diagnosis($conn, $appointmentID,$xAxis,$yAxis, $size, $maxX){
 
         $rec = getPrescribedDiagnosis($conn, $appointmentID);
         if($rec){
@@ -33053,9 +32889,7 @@ function convertNumberToBangla($full_str){
             $diseaseName = $rec['diseasename'];
             $this->MultiCell($maxX, 5,"$diseaseName");
         }
-
         return $this->GetY();
-
     }
     function show_Complain($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size) {
 
@@ -33087,10 +32921,9 @@ function convertNumberToBangla($full_str){
             }else if($durationType < 5){
             	$temp = $this->convertNumberToBangla($durationNum);
                 $this->MultiCell($maxX,5," $symptomName - $temp - $durationTypeName");
-            }elseif ($durationType == 7){
+            }else if ($durationType == 7){
                 $this->MultiCell($maxX,5," $symptomName - $durationTypeName");
             }
-
             $var++;
         }
 
@@ -33116,10 +32949,9 @@ function convertNumberToBangla($full_str){
             	$this->MultiCell($maxX,5,".$diseaseName - $relationName");
             }
         }
-
         return $this->GetY();
     }
-    function show_Past_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedearText){
+    function show_Past_History($conn, $appointmentID,$xAxis,$yAxis, $maxX , $size, $status , $hedarText){
     	
         $resultData = getPresPastDisease($conn, $appointmentID, $status);
         if(!$resultData){
@@ -33127,7 +32959,7 @@ function convertNumberToBangla($full_str){
         }else if($resultData && $resultData->rowCount() > 0){
             $this->SetFont('nikosh','B',$size);
             $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5,$hedearText);
+            $this->MultiCell($maxX,5,$hedarText);
             $yAxis += 6;
             $this->SetFont('nikosh','',$size);
             while($row = $resultData->fetch(PDO::FETCH_ASSOC)){
@@ -33138,12 +32970,9 @@ function convertNumberToBangla($full_str){
             	$this->MultiCell($maxX,5,".$diseaseName");
             }
         }
-
-        
-
         return $this->GetY();
     }
-    function show_History($conn, $appointmentID,$doctorID, $xAxis,$yAxis, $maxX , $size){
+    function show_History($conn, $appointmentID,$doctorID, $xAxis,$yAxis, $maxX, $size){
     	
     	$customHistoryList = getDotorHistory($conn, $doctorID);
     	
@@ -33151,7 +32980,7 @@ function convertNumberToBangla($full_str){
     		return $yAxis;
     	}
     	if($customHistoryList->rowCount() > 0){
-    		while($row = $customHistoryList->fetch(PDO::FETCH_ASSOC)){
+    		while($cus = $customHistoryList->fetch(PDO::FETCH_ASSOC)){
     			$typeCode = $cus['defaultname'];
     			$headerText = $cus['menuheader'];
     			$resultData = getCustomHistory($conn, $appointmentID, $typeCode);
@@ -33166,7 +32995,7 @@ function convertNumberToBangla($full_str){
     					$historylDisplayName = $row['historyname'];
     					$yAxis = $this->checkForPageChange($yAxis, $this->page);
     					$this->SetXY($xAxis, $yAxis);
-    					$this->MultiCell($maxX,5,".$historylDisplayName:  $historyResult");
+    					$this->MultiCell($maxX,5,"$historylDisplayName:  $historyResult");
     					$yAxis = $yAxis + 5;
     				}
     			}
@@ -33174,9 +33003,8 @@ function convertNumberToBangla($full_str){
     		}
     	}
         return $this->GetY();
-
     }
-    function show_ref_doc($conn, $appointmentID,$xAxis,$yAxis,$size){
+    function show_ref_doc($conn, $appointmentID,$xAxis,$yAxis,$size, $maxX){
     	
         $resultData = getPrescribedReffredDoctor($conn, $appointmentID);
         if($resultData->rowCount() > 0){
@@ -33198,55 +33026,43 @@ function convertNumberToBangla($full_str){
     function show_nextVisit($conn, $appointmentID,$xAxis,$yAxis,$size){
 
         $rec = getPrescribedNextVisit($conn, $appointmentID);
-        
         if($rec){
         	$nextVisitType = $rec['nextvisittype'];
-        	
         	$this->SetXY($xAxis, $yAxis);
-        	
         	if($nextVisitType == 2){
         		$data = " পর আবার আসবেন।";
         		$numOfday = $rec['numofday'];
         		$numOfday = $this->convertNumberToBangla($numOfday);
         		$dayType = $rec['durationtypename'];
         		$this->MultiCell(60,5, "$numOfday - $dayType $data", 1);
-        	
         	}else if($nextVisitType == 1){
         		$data = " তারিখে আবার আসবেন।";
-        		$date = $rec['visitdate'];
-        		$newDate = date("d-m-Y", strtotime($date));
-        		$newDate = $this->convertNumberToBangla($newDate);
+                $date=date_create($rec['visitdate']);
+                $formattedDate = date_format($date,"d-m-Y");
+        		$newDate = $this->convertNumberToBangla($formattedDate);
         		$this->MultiCell(60,5, "$newDate $data", 1);
         	}
         }
-
         return $this->GetY();
-
     }
-
     function show_advice($conn, $appointmentID,$xAxis,$yAxis,$size,$maxX){
-
         $resultData = getPrescribedAdvice($conn, $appointmentID);
-
         if($resultData->rowCount() > 0){
             $this->SetFont('nikosh','B',$size );
             $this->SetXY($xAxis , $yAxis);
-            $this->MultiCell(20,5,"Advice");
+            $this->MultiCell(20,5,"উপেদশ");
         }
-
         $this->SetFont('nikosh','',$size );
-
         while($row = $resultData->fetch(PDO::FETCH_ASSOC)){
             $advice = $row['advice'];
 
             $yAxis =  $this->GetY();
             $yAxis = $this->checkForPageChange($yAxis, $this->page);
             $this->SetXY($xAxis, $yAxis );
-            $this->MultiCell($maxX,5,".$advice");
+            $this->MultiCell($maxX,5,"* $advice");
         }
         return $this->GetY();
     }
-    
     function show_advice_temp($conn, $appointmentID,$xAxis,$yAxis,$size,$maxX){
     
     	$resultData = $resultData = getContentDetail($conn, $appointmentID, 'FOLLOW_UP');
@@ -33266,7 +33082,6 @@ function convertNumberToBangla($full_str){
     	}
     	return $this->GetY();
     }
-    
     function show_vital($conn, $appointmentID,$xAxis, $yAxis, $maxX, $size){
 
         $resultData = getPrescribedVital($conn, $appointmentID);
@@ -33297,8 +33112,6 @@ function convertNumberToBangla($full_str){
         return $this->GetY();
     }
     function show_inv($conn, $appointmentID, $xAxis,$yAxis,$maxX,$size) {
-
-
         $resultData = getPrescribedInv($conn, $appointmentID);
 
         if($resultData->rowCount() > 0){
@@ -33320,13 +33133,166 @@ function convertNumberToBangla($full_str){
             $yAxis =  $this->GetY();
             $yAxis = $this->checkForPageChange($yAxis, $this->page);
             $this->SetXY($xAxis, $yAxis);
-            $this->MultiCell($maxX,5," .$invName");
+            $this->MultiCell($maxX,5," *$invName");
             $var++;
         }
-
         return $this->GetY();
-
     }
+
+    function show_diet($conn, $appointmentID,$xAxis,$yAxis,$size){
+        $result = getContentDetail($conn, $appointmentID, "DIET");
+        $rec = $result->fetch(PDO::FETCH_ASSOC);
+        if($rec['shortname'] != ""){
+            $this->SetFont('nikosh','B',$size);
+            $this->SetXY($xAxis, $yAxis);
+            $this->MultiCell(110,5, "Diet");
+            $this->SetFont('nikosh','',$size);
+            $this->SetXY($xAxis, $yAxis +5 );
+            $this->MultiCell(110,5, $rec['shortname']);
+            return $this->GetY();
+        }
+        return $yAxis;
+    }
+
+    function show_med($conn, $appointmentID, $xAxis, $yAxis, $size, $pageNum,$pdf){
+
+        $resultData = getPresCribedDrugs($conn, $appointmentID);
+
+
+        if($resultData->rowCount() > 0){
+            $this->SetFont('nikosh','B',$size);
+            $this->SetXY($xAxis , $yAxis);
+            $this->MultiCell(40,5,"Rx");
+            $yAxis += 6;
+
+        }else{
+            return $yAxis - 5;
+        }
+
+        $this->SetFont('nikosh','',$size);
+
+        $nameCell = 100;
+        $doseCell = 40;
+        $durationCell = 70;
+        $whenCell = 15;
+        $var = 1;
+
+        while($row = $resultData->fetch(PDO::FETCH_ASSOC)){
+
+            //$this->SetFont('Times','',$size + 2);
+
+            $drugType = $row['drugtypeinitial'];
+            $drugName = $row['drugname'];
+            $drugStr = $row['drugstrength'];
+            $drugPrescribeID = $row['presdrugid'];
+            $doseTypeID = $row['dosetypecode'];
+            $doseTypeName = $row['dosetypename'];
+            $drugDoseInitial = $row['drugdoseunit'];
+            $drugWhen = $row['drugwhenname'];
+            $drugWhenID = $row['drugwhenid'];
+            $drugAdvice = $row['drugadvicename'];
+            $drugAdviceID = $row['drugadvicename'];
+            $doseString = $row['dosestring'];
+
+
+            $yAxis =  $this->GetY() + 2;
+            if(($yAxis + 10)  > 260 ){
+                $this->AddPage();
+                $yAxis = 60;
+            }
+
+
+            $this->SetXY($xAxis, $yAxis);
+            if($drugStr  == ""){
+                $this->MultiCell($nameCell,5,"$var. $drugType. $drugName");
+            }else{
+                $this->MultiCell($nameCell,5,"$var. $drugType. $drugName- $drugStr");
+            }
+            $var = $var + 1;
+
+
+            $this->SetXY($xAxis + 5, $yAxis + 6);
+            $doseData = json_decode($doseString, TRUE);
+
+
+            if($doseTypeID != -1){
+                $dose = $doseData[0];
+                $drugDose = $dose['dose'];
+                $drugNoDay = $dose['numOfDay'];
+                $drugNoDayType = $dose['bngDurationName'];
+                $drugDurType = $dose['durationType'];
+                $drugDose = str_replace("-","+", $drugDose);
+                if($doseTypeID == 1){
+                    if($drugAdviceID == 14 || $drugWhenID == 11 || $drugAdviceID == 54 || $drugAdviceID == 62 || $drugWhenID == 23){
+                        $drugDose =  "$drugDose + 0 + 0";
+                    }else if ($drugAdviceID == 15 || $drugWhenID == 13){
+                        $drugDose =  "0 + 0 + $drugDose";
+                    }else if($drugAdviceID == 16 || $drugWhenID == 12){
+                        $drugDose =  "0 + $drugDose + 0";
+                    }else{
+                        $drugDose =  "0 + 0 + $drugDose";
+                    }
+
+                }else if($doseTypeID == 2){
+                    list($num,$type) = explode('+', $drugDose, 2);
+                    $drugDose =  "$num + 0 + $type";
+                }
+
+
+                if($drugDurType >  4){
+                    $drugNoDay = "";
+                }
+                $restOftheString = "- $drugWhen $drugAdvice $drugNoDay $drugNoDayType";
+
+            }else{
+                $index= 0;
+                $periodText = "";
+
+                foreach ($doseData as $dose){
+                    $drugDose = $dose['dose'];
+                    $drugNoDay = $dose['numOfDay'];
+                    $drugDurType = $dose['durationType'];
+                    $drugNoDayType = $dose['bngDurationName'];
+
+                    $drugDose = str_replace("-","+", $drugDose);
+
+                    $text = "";
+                    if($drugDoseInitial == ""){
+                        $text = "($drugDose)";
+                    }else{
+                        $text = "($drugDose) $drugDoseInitial ";
+                    }
+
+                    if($drugDurType >  4){
+                        $drugNoDay = "";
+                    }
+                    if($index == 0){
+                        $periodText = 'প্রথম'. " $drugNoDay $drugNoDayType $text";
+                    }else{
+                        $periodText = "$periodText". " তারপর " . " $text $drugNoDay $drugNoDayType";
+                    }
+                    //$periodText = "$periodText". " ---  ". $drugDose;
+                    $index++;
+
+                }
+
+                $restOftheString = "$periodText $drugWhen $drugAdvice";
+                $drugDose = "";
+            }
+
+            $full_str = "";
+            if($drugDoseInitial == "" || $drugDose == ''){
+                $full_str = "$drugDose $restOftheString ";
+            }else{
+                $full_str ="($drugDose)$drugDoseInitial $restOftheString";
+            }
+            $full_str = $this->convertNumberToBangla($full_str);
+            $this->MultiCell(110,5,"$full_str");
+            //$yAxis += 8;
+        }
+        return $this->GetY();
+    }
+
 
 /*-- END IMPORTS --*/
 

@@ -34,7 +34,7 @@ function getPresCribedDrugs($conn, $appointmentID){
 		JOIN content_dose_type DT ON PD.doseTypeCode = DT.doseCode
 		LEFT JOIN content_drug_advice CDA ON PD.drugAdviceID = CDA.drugAdviceID
 		LEFT JOIN content_when_type CWT ON PD.drugWhenID = CWT.whenTypeID
-		WHERE PD.appointMentID = '$appointmentID' ORDER BY PD.presNum" ;
+		WHERE PD.appointMentID = '$appointmentID' ORDER BY PD.presNum ASC" ;
 
 	$sth = $conn->prepare($sql);
 	$sth->execute();
